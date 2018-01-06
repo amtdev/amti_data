@@ -28,12 +28,12 @@ execute "Create database" do
 end
 
 #drop user
-execute "drop user if exists" do
-  command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e \"DROP USER '#{node[:dbconf][:db_username]}'@'%';\""
-end
+#execute "drop user if exists" do
+#  command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e \"DROP USER IF EXISTS '#{node[:dbconf][:db_username]}'@'%';\""
+#end
 
 execute "Create database user" do
-    command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e \"CREATE USER '#{node[:dbconf][:db_username]}'@'%' IDENTIFIED BY '#{node[:dbconf][:db_password]}';\""
+    command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e \"CREATE USER IF NOT EXISTS '#{node[:dbconf][:db_username]}'@'%' IDENTIFIED BY '#{node[:dbconf][:db_password]}';\""
 end
 
 execute "Give root access from everywhere" do
