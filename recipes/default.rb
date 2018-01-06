@@ -16,3 +16,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#Drop db
+execute "drop db if exists" do
+  command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e 'DROP DATABASE IF EXISTS #{node[:dbconf][:database]};'"
+end
+
+# Create db
+execute "Create database" do
+  command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e 'CREATE DATABASE #{node[:dbconf][:database]} DEFAULT CHARACTER SET `utf8`;'"
+  action :run
+end
+
+#drop user
+execute "drop user if exists" do
+  command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e \"DROP USER '#{node[:dbconf][:db_username]}'@'%';\""
+end
+
+execute "Create database user" do
+    command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e \"CREATE USER '#{node[:dbconf][:db_username]}'@'%' IDENTIFIED BY '#{node[:dbconf][:db_password]}';\""
+end
+
+execute "Give root access from everywhere" do
+  command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e \"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '#{node[:mysql][:server_root_password]}' WITH GRANT OPTION;\""
+  action :run
+end
+
+execute "Give #{node[:dbconf][:db_username]} access to #{node[:dbconf][:database]} from everywhere" do
+  command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e \"GRANT ALL PRIVILEGES ON #{node[:dbconf][:database]} .* TO '#{node[:dbconf][:db_username]}'@'%' WITH GRANT OPTION;\""
+  action :run
+end
+
+if 'null' != node['dbconf']['socket']
+    #socket = '-S "+node['dbconf']['socket']"
+end
+
+#execute "import database" do
+#end
