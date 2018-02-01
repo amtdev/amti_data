@@ -43,19 +43,22 @@ execute "Create database user" do
     action :run
 end
 
-#execute "Give root access from everywhere" do
-  #command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e \"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '#{node[:mysql][:server_root_password]}' WITH GRANT OPTION;\""
-  #action :run
-#end
-
-#execute "Give #{node[:dbconf][:db_username]} access to #{node[:dbconf][:database]} from everywhere" do
-  #command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e \"GRANT ALL PRIVILEGES ON #{node[:dbconf][:database]} .* TO '#{node[:dbconf][:db_username]}'@'%' WITH GRANT OPTION;\""
-  #action :run
-#end
-
-if 'null' != node['dbconf']['socket']
-    #socket = '-S "+node['dbconf']['socket']"
+execute "Give root access from everywhere" do
+  command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e \"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '#{node[:mysql][:server_root_password]}' WITH GRANT OPTION;\""
+  action :run
 end
 
-#execute "import database" do
-#end
+execute "Give #{node[:dbconf][:db_username]} access to #{node[:dbconf][:database]} from everywhere" do
+  command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e \"GRANT ALL PRIVILEGES ON #{node[:dbconf][:database]} .* TO '#{node[:dbconf][:db_username]}'@'%' WITH GRANT OPTION;\""
+  action :run
+end
+
+if 'null' == node['dbconf']['socket']
+    execute "import database" do
+       command "mysql -u root -p"+node['mysql']['server_root_password']+" "+node['dbconf']['database']+" < /vagrant/cookbooks/amti_data/files/default/"+node['dbconf']['database']+".sql"
+    end
+else
+    execute "import database with socket" do
+        command "mysql -S "+node['dbconf']['socket']+" -u root -p"+node['mysql']['server_root_password']+" "+node['dbconf']['database']+" < /vagrant/cookbooks/amti_data/files/default/"+node['dbconf']['database']+".sql"
+    end
+end
