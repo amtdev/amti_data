@@ -55,14 +55,14 @@ end
 
 if 'null' == node['dbconf2']['socket']
     execute "import database" do
-       command "mysql -u root -p"+node['mysql']['server_root_password']+" "+node['dbconf2']['database']+" < /vagrant/cookbooks/amti_data/files/default/"+node['dbconf2']['database']+".sql"
+       command "mysql -u root -p"+node['mysql']['server_root_password']+" "+node['dbconf2']['database']+" < /vagrant/cookbooks/amti_data/files/"+node['dbconf2']['file_folder']+"/"+node['dbconf2']['database']+".sql"
     end
 else
     execute "import database with socket" do
-        command "mysql -S "+node['dbconf2']['socket']+" -u root -p"+node['mysql']['server_root_password']+" "+node['dbconf2']['database']+" < /vagrant/cookbooks/amti_data/files/default/"+node['dbconf2']['database']+".sql"
+        command "mysql -S "+node['dbconf2']['socket']+" -u root -p"+node['mysql']['server_root_password']+" "+node['dbconf2']['database']+" < /vagrant/cookbooks/amti_data/files/"+node['dbconf2']['file_folder']+"/"+node['dbconf2']['database']+".sql"
     end
 end
 
-execute "flush privs" do
+execute "flush privs db2" do
     command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e \"FLUSH PRIVILEGES;\""
 end
