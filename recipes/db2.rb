@@ -55,11 +55,11 @@ end
 
 if 'null' == node['dbconf2']['socket']
     execute "import database" do
-       command "mysql -u root -p"+node['mysql']['server_root_password']+" "+node['dbconf2']['database']+" < /vagrant/cookbooks/amti_data/files/"+node['dbconf2']['file_folder']+"/"+node['dbconf2']['database']+".sql"
+       command "mysql -u root -p"+node['mysql']['server_root_password']+" "+node['dbconf2']['database']+" < /vagrant/cookbooks/amti_data/files/"+node['dbconf2']['source_folder']+"/"+node['dbconf2']['database']+".sql"
     end
 else
     execute "import database with socket" do
-        command "mysql -S "+node['dbconf2']['socket']+" -u root -p"+node['mysql']['server_root_password']+" "+node['dbconf2']['database']+" < /vagrant/cookbooks/amti_data/files/"+node['dbconf2']['file_folder']+"/"+node['dbconf2']['database']+".sql"
+        command "mysql -S "+node['dbconf2']['socket']+" -u root -p"+node['mysql']['server_root_password']+" "+node['dbconf2']['database']+" < /vagrant/cookbooks/amti_data/files/"+node['dbconf2']['source_folder']+"/"+node['dbconf2']['database']+".sql"
     end
 end
 
