@@ -24,7 +24,7 @@ end
 
 # Create db
 execute "Create database" do
-  command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e \"CREATE DATABASE #{node[:dbconf][:database]} DEFAULT CHARACTER SET utf8;\""
+  command "mysql -uroot -p#{node[:mysql][:server_root_password]} -e \"CREATE DATABASE #{node[:dbconf][:database]} DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;\""
   action :run
 end
 
